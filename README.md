@@ -1,4 +1,4 @@
-# clientmanagerapi
+# clientmanagerapi - Default branch: main
 
 # Steps: 
 1. Resolve all the maven dependencies from pom.xml (No action required if you're using IntelliJ Idea) 
