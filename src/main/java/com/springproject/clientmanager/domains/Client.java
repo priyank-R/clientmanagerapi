@@ -1,6 +1,7 @@
 package com.springproject.clientmanager.domains;
 
 import javax.persistence.*;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -20,7 +21,7 @@ public class Client  {
     @JoinColumn(name = "user_id",nullable = false)
     private User clientOf;
     @OneToMany(mappedBy = "client",cascade = CascadeType.ALL)
-    private List<Service> services;
+    private List<Service> services = Collections.EMPTY_LIST;
 
     public Client(){
 

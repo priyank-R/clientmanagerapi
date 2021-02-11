@@ -81,6 +81,7 @@ CREATE TABLE `SERVICE` (
   `rate` float NOT NULL,
   `expires_on` date NOT NULL,
   `note` varchar(45) DEFAULT NULL,
+  `client` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
