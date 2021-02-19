@@ -2,6 +2,7 @@ package com.springproject.clientmanager.security;
 
 import com.springproject.clientmanager.helpers.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@DependsOn({"securityConfigurer"})
 @Component
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
     @Autowired
@@ -62,7 +64,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             }
         }
-        System.out.println("Second filter chain jwt filter");
         filterChain.doFilter(req, res);
     }
 
