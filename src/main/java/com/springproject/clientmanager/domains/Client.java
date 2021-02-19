@@ -1,5 +1,7 @@
 package com.springproject.clientmanager.domains;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Collections;
 import java.util.List;
@@ -19,9 +21,10 @@ public class Client  {
 
     @ManyToOne
     @JoinColumn(name = "user_id",nullable = false)
+    @JsonIgnore
     private User clientOf;
     @OneToMany(mappedBy = "client",cascade = CascadeType.ALL)
-    private List<Service> services = Collections.EMPTY_LIST;
+    private List<Service> services = Collections.emptyList();
 
     public Client(){
 

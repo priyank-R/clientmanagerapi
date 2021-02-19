@@ -21,9 +21,9 @@ public class User  {
     @JsonIgnore
     private String password;
 
+    @JsonIgnore
     @OneToOne(targetEntity = Contact.class, cascade = CascadeType.ALL)
     @JoinColumn(name="contact",referencedColumnName = "id")
-    @JsonIgnore
     private Contact info;
 
     @OneToMany(mappedBy = "clientOf",cascade = {CascadeType.ALL})
@@ -95,7 +95,9 @@ public class User  {
     @Override
     public String toString() {
         return "User{" +
-                ", email='" + email + '\'' +
+                "email='" + email + '\'' +
+                ", name='" + name + '\'' +
+                ", info=" + info +
                 '}';
     }
 }

@@ -6,6 +6,7 @@ import com.springproject.clientmanager.domains.User;
 import com.springproject.clientmanager.exceptions.EmailAlreadyExistsException;
 import com.springproject.clientmanager.exceptions.IncompleteDataException;
 import com.springproject.clientmanager.exceptions.UserNotFoundException;
+import com.springproject.clientmanager.repositories.ClientRepository;
 import com.springproject.clientmanager.repositories.UserRepository;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    ClientRepository clientRepository;
 
     @Override
     public User registerUser(String name, String email, String password, String phone, String company) throws EmailAlreadyExistsException, IncompleteDataException {
@@ -58,12 +61,12 @@ public class UserServiceImpl implements UserService {
             try{
                 Contact contact = new Contact(client_email,client_phone,client_company);
                 Client client = new Client(client_name,contact,user);
+                Client savedClient = clientRepository.save(client);
                 user.setClient(client);
                 userRepository.save(user);
-                return client;
+                return savedClient;
             }catch(JpaSystemException jpaE){
                 throw new RuntimeException(jpaE);
-
             }catch(Exception e){
                 throw new RuntimeException(e);
             }

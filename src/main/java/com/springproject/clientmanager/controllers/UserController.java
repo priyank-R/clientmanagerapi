@@ -1,10 +1,13 @@
 package com.springproject.clientmanager.controllers;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.fasterxml.jackson.databind.util.JSONWrappedObject;
 import com.google.gson.JsonObject;
 import com.springproject.clientmanager.domains.*;
+import com.springproject.clientmanager.dto.ClientDTO;
+import com.springproject.clientmanager.dto.ServiceDTO;
 import com.springproject.clientmanager.exceptions.EmailAlreadyExistsException;
 import com.springproject.clientmanager.exceptions.IncompleteDataException;
 import com.springproject.clientmanager.helpers.JsonUtility;
@@ -69,42 +72,66 @@ public class UserController {
            User user =  userService.registerUser(name,email,password,phone,company);
 
            //converting to json and appending property
-//           String jsonString = JsonUtility.addPropertyToObject(user,"status","success");
-
-        return ResponseEntity.ok(user);
+           JsonNode json = JsonUtility.addPropertyToObject(user,"status","success");
+           return ResponseEntity.ok(json);
     }
 
 
     @GetMapping
     public ResponseEntity<?> getUser(@RequestHeader("Authorization")String token){
         String user = SecurityContextHolder.getContext().getAuthentication().getName();
-        return ResponseEntity.ok(user);
+        JsonObject jsonObject = JsonUtility.buildJsonObject("email",user);
+
+        JsonNode json = JsonUtility.addPropertyToObject(jsonObject,"status","success");
+        return ResponseEntity.ok(json);
     }
 
     @PostMapping("/addclient")
     ResponseEntity<?> addNewClient(@RequestBody Map<String, Object> body) {
-        System.out.println("Gets into /addclient route");
-        String client_name = (String) body.get("client_name");
-        String client_email = (String) body.get("client_email");
-        String client_phone = (String) body.get("client_phone");
-        String client_company = (String) body.get("client_company");
+        try{
+            System.out.println("Gets into /addclient route");
+            String client_name = (String) body.get("client_name");
+            String client_email = (String) body.get("client_email");
+            String client_phone = (String) body.get("client_phone");
+            String client_company = (String) body.get("client_company");
 
-        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+            String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+            Client client =  userService.addNewClient(userEmail, client_name, client_email, client_phone, client_company);
+            ClientDTO clientDto = new ClientDTO(client);
+            JsonNode json = JsonUtility.addPropertyToObject(clientDto,"status","success");
+            return ResponseEntity.ok(json);
+        }catch(Exception e){
+            System.out.println("add client route stack trace");
+            e.printStackTrace();
+            return null;
 
-        Client client =  userService.addNewClient(userEmail, client_name, client_email, client_phone, client_company );
-        //converting to json
-//       String jsonString = JsonUtility.addPropertyToObject(client,"status","success");
-       return ResponseEntity.ok(client);
+        }
+
+
     }
     @GetMapping("/getclients")
     ResponseEntity getClients(){
 
         System.out.println("/getclients route invoked !");
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-       List clientMap = clientService.getClients(userEmail);
+
+        List<ClientDTO> clientDto = new ArrayList<>();
+        List<Client> clientMap = clientService.getClients(userEmail);
+        System.out.println("Client map: " +  clientMap.toString());
+
+
+        for(Client clt : clientMap){
+//           clientDto.add(new ClientDTO(clt.getName(),clt.getInfo().getEmail(),clt.getId()));
+            clientDto.add(new ClientDTO(clt));
+        }
+        System.out.println("client dto list is:  " + clientDto );
        Map map = new HashMap();
-       map.put("clients",clientMap);
-        return ResponseEntity.ok(new SuccessResponse(map));
+
+       map.put("clients",clientDto);
+        JsonNode json = JsonUtility.addPropertyToObject(map,"status","success");
+
+        return ResponseEntity.ok(json);
+//        return ResponseEntity.ok(new SuccessResponse(map));
 
     }
 
@@ -113,9 +140,9 @@ public class UserController {
 
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         Service service =  clientService.addService(body,userEmail);
-
-//        String jsonString = JsonUtility.addPropertyToObject(service,"status","success");
-        return ResponseEntity.ok(service);
+        ServiceDTO serviceDTO = new ServiceDTO(service);
+        JsonNode jsonString = JsonUtility.addPropertyToObject(serviceDTO,"status","success");
+        return ResponseEntity.ok(jsonString);
     }
 
     @PostMapping("/signin")

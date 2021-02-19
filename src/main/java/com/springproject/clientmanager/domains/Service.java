@@ -1,5 +1,6 @@
 package com.springproject.clientmanager.domains;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
@@ -15,10 +16,11 @@ public class Service {
 
     @Column(name="service_type")
     private ServiceType serviceType;
+
     @ManyToOne
     @JoinColumn(name = "client",nullable = false)
-    @JsonIgnore
     private Client client;
+
     private String url;
     private Float rate;
     @Column(name = "expires_on")
